@@ -1,5 +1,10 @@
 class ItemsController < ApplicationController
   before_action :require_user_logged_in
+  
+  def show
+    @item = Item.find(params[:id])
+    @want_users = @item.want_users
+  end
 
   def new
     @items = [] #配列
@@ -14,25 +19,9 @@ class ItemsController < ApplicationController
 
       results.each do |result|
         # 扱い易いように Item としてインスタンスを作成する（保存はしない）
-        item = Item.find_or_initialize_by(read(result)) #read(result) のユーザが存在する場合は取得(find)、しなければ新規作成(未保存)
+        item = Item.find_or_initialize_by(read(result)) #read(result) のitemが存在する場合は取得(find)※unwant用、存在しなければ新規作成(未保存)
         @items << item  #左辺の配列（レシーバ）の末尾に右辺のオブジェクトを要素として加えます。
       end
     end
-  end
-
-  private
-
-  def read(result)
-    code = result['itemCode']
-    name = result['itemName']
-    url = result['itemUrl']
-    image_url = result['mediumImageUrls'].first['imageUrl'].gsub('?_ex=128x128', '') #画像 URL 末尾に含まれる ?_ex=128x128 を削除
-
-    return {
-      code: code,
-      name: name,
-      url: url,
-      image_url: image_url,
-    }
   end
 end
