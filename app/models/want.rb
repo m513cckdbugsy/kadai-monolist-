@@ -1,4 +1,7 @@
 class Want < Ownership
+  def self.ranking
+    self.group(:item_id).order('count_item_id DESC').limit(10).count(:item_id)
+  end
 end
 
 #モデルの継承関係で表現されるものに関して、Rails は標準機能を提供しています。
