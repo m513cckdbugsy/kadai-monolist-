@@ -1,5 +1,5 @@
 class OwnershipsController < ApplicationController
-  def create #Item の Want ボタンが押されたときにこのアクションに行き着く
+  def create #Item の Want.Have ボタンが押されたときにこのアクションに行き着く
     @item = Item.find_or_initialize_by(code: params[:item_code])
 
     unless @item.persisted?
@@ -15,16 +15,27 @@ class OwnershipsController < ApplicationController
       current_user.want(@item)
       flash[:success] = '商品を Want しました。'
     end
+    
+    # Have 関係として保存
+    if params[:type] == 'Have'
+      current_user.have(@item)
+      flash[:success] = '商品を Have しました。'
+    end
 
-    redirect_back(fallback_location: root_path) #Want ボタンをクリックしたページへ戻す
+    redirect_back(fallback_location: root_path) #Want ,Haveボタンをクリックしたページへ戻す
   end
 
-  def destroy #Item の Unwant ボタンが押されたときにこのアクションに行き着く
+  def destroy #Item の Unwant /Unhaveボタンが押されたときにこのアクションに行き着く
     @item = Item.find(params[:item_id])
 
     if params[:type] == 'Want'
       current_user.unwant(@item) 
       flash[:success] = '商品の Want を解除しました。'
+    end
+    
+    if params[:type] == 'Have'
+      current_user.unhave(@item) 
+      flash[:success] = '商品の Have を解除しました。'
     end
 
     redirect_back(fallback_location: root_path)

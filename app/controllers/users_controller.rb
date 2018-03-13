@@ -7,6 +7,7 @@ class UsersController < ApplicationController
     #商品がどちらにも一つずつ（結果、重複した商品が2つ）取得されてしまうので.uniq とすれば、重複を防いで取得できます。
     @items = @user.items.uniq 
     @count_want = @user.want_items.count
+    @count_have = @user.have_items.count
   end
 
   def new
